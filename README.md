@@ -12,6 +12,7 @@ Beyond Bags of Features: Spatial Pyramid Matching for Recognizing Natural Scene 
 - Comparing result of 2 algorithm above.
 
 ## Our report
+[Visual Categorization Group 8](https://drive.google.com/file/d/1nLKfMoRdf1AGfQUSnw6BhtmRKCzZXevJ/view?usp=sharing)
 
 ## Usage
 - Cloning this project to your computer.
