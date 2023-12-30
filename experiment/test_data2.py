@@ -5,7 +5,7 @@ import numpy as np
 import cupy as xp
 from matplotlib import pyplot as plt
 from sklearn.metrics import confusion_matrix
-
+from ..configs import config as cfg
 from codebook_extraction import build_codebook
 from confusion_matrix import plotting_confusion_matrix
 from features_extraction import extract_features
@@ -16,9 +16,8 @@ from svm_gpu import SVM
 class_name = ['city', 'face', 'green', 'house_building', 'house_indoor', 'office', 'sea']
 dic_class_name = {'city': 1, 'face': 2, 'green': 3, 'house_building': 4, 'house_indoor': 5, 'office': 6, 'sea': 7}
 
-path = open('path.txt', 'r').read()
-path_train = path + '/dataset2/train/'
-path_test = path + '/dataset2/test/'
+path_train = cfg.TRAIN_PATH_DATASET2
+path_test = cfg.TEST_PATH_DATASET2
 
 
 def get_key(dic_class_name, val):
@@ -56,7 +55,7 @@ def BoK_data2():
     x_train, x_test, y_train, y_test = data_extraction()
     _, x_train_ef = extract_features(x_train)
     _, x_test_ef = extract_features(x_test)
-    codebook = build_codebook(x_train_ef, k=1000)
+    codebook = build_codebook(x_train_ef, k=cfg.CODEBOOK_K_DATASET2)
     x_train_final = build_vocab(x_train_ef, codebook)
     x_test_final = build_vocab(x_test_ef, codebook)
 
@@ -109,10 +108,10 @@ def SPM_data2():
     codebook = build_codebook(x_train_ef, k=1000)
 
     for img in x_train:
-        x_train_spm.append(extract_vocab_SPM(img, L=4, kmeans=codebook))
+        x_train_spm.append(extract_vocab_SPM(img, L=cfg.SPM_L_DATASET2, kmeans=codebook))
 
     for img in x_test:
-        x_test_spm.append(extract_vocab_SPM(img, L=4, kmeans=codebook))
+        x_test_spm.append(extract_vocab_SPM(img, L=cfg.SPM_L_DATASET2, kmeans=codebook))
 
     x_train_spm = xp.asarray(x_train_spm)
     x_test_spm = xp.asarray(x_test_spm)

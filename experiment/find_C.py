@@ -2,7 +2,7 @@ import pickle
 
 import numpy as np
 import cupy as xp
-
+from ..configs import config as cfg
 from experiment.data_preparation import prepare_data_test, prepare_data_train, prepare_data_val
 from features_extraction import extract_features
 from histogram_extraction import build_vocab
@@ -36,14 +36,14 @@ def find_C():
     x_train_C = x_train + x_val
     y_train_C = y_train + y_val
 
-    path = open('path.txt', 'r').read()
-    with open(path + '/dataset1/codebook.pkl', 'rb') as fp:
+    
+    with open(cfg.CODEBOOK_PATH, 'rb') as fp:
         codebook = pickle.load(fp)
 
     _, x_train_C = extract_features(x_train_C)
     _, x_test_C = extract_features(x_test_C)
 
-    with open(path + '/dataset1/codebook.pkl', 'rb') as fp:
+    with open(cfg.CODEBOOK_PATH, 'rb') as fp:
         codebook_C = pickle.load(fp)
 
     x_train_C = build_vocab(x_train_C, codebook_C)
@@ -64,7 +64,7 @@ def find_C():
     x_train_C = xp.asarray(x_train_C)
     x_test_C = xp.asarray(x_test_C)
 
-    for c in np.arange(0.0001, 0.1, 0.00198):
+    for c in np.arange(cfg.C_VALUES_RANGE[0], cfg.C_VALUES_RANGE[1], cfg.C_VALUES_RANGE[2]):
         svm_model = SVM(kernel='linear', kernel_params={}, lambduh=c)
         svm_model.fit(x_train_C, y_tr_C)
         y_pred = svm_model.predict(x_test_C)

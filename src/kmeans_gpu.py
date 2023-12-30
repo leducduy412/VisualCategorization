@@ -1,9 +1,11 @@
 import torch
 import random
 import sys
+from ..configs import config as cfg
 
-device_gpu = torch.device('cuda')
-device_cpu = torch.device('cpu')
+device_gpu = cfg.DEVICE_GPU
+device_cpu = cfg.DEVICE_CPU
+chunk_size = cfg.CHUNK_SIZE
 
 
 # Choosing `num_centers` random data points as the initial centers
@@ -65,7 +67,7 @@ def update_centers(dataset, codes, num_centers):
     return centers
 
 
-def cluster(dataset, num_centers):
+def cluster(dataset, num_centers=cfg.NUM_CENTERS):
     centers = random_init(dataset, num_centers)
     codes = compute_codes(dataset, centers)
     num_iterations = 0
@@ -77,7 +79,7 @@ def cluster(dataset, num_centers):
         new_codes = compute_codes(dataset, centers)
         # Waiting until the clustering stops updating altogether
         # This is too strict in practice
-        if torch.equal(codes, new_codes):
+        if torch.equal(codes, new_codes) or num_iterations >= cfg.MAX_ITERATIONS:
             sys.stdout.write('\n')
             print('Converged in %d iterations' % num_iterations)
             break

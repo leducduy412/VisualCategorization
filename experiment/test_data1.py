@@ -3,7 +3,7 @@ import cupy as xp
 import numpy as np
 from matplotlib import pyplot as plt
 from sklearn.metrics import confusion_matrix
-
+from ..configs import config as cfg
 from confusion_matrix import plotting_confusion_matrix
 from experiment.data_preparation import prepare_data_train, prepare_data_test, prepare_data_val
 from spm import extract_vocab_SPM
@@ -56,16 +56,17 @@ def SPM_data1():
     x_train = x_train + x_val
     y_train = y_train + y_val
 
-    path = open('path.txt', 'r').read()
-    with open(path + '/dataset1/codebook.pkl', 'rb') as fp:
+    with open(cfg.CODEBOOK_PATH, 'rb') as fp:
         codebook = pickle.load(fp)
 
-    x_train_spm = extract_vocab_SPM(x_train, L=2, kmeans=codebook)
-    x_test_spm = extract_vocab_SPM(x_test, L=2, kmeans=codebook)
+    # Extract features using SPM
+    x_train_spm = extract_vocab_SPM(x_train, L=cfg.SPM_L, kmeans=codebook)
+    x_test_spm = extract_vocab_SPM(x_test, L=cfg.SPM_L, kmeans=codebook)
 
-    svm_model = SVM(kernel='linear', kernel_params={}, lambduh=0.0001)
+    # Initialize and train the SVM model
+    svm_model = SVM(kernel=cfg.SVM_KERNEL, kernel_params={}, lambduh=cfg.SVM_LAMBDUH)
 
-    # Huấn luyện mô hình
+    # Training model
 
     x_train_spm = xp.asarray(x_train_spm)
     x_test_spm = xp.asarray(x_test_spm)
@@ -78,7 +79,7 @@ def SPM_data1():
     y_te = xp.asarray(y_te)
     svm_model.fit(x_train_spm, y_tr)
 
-    # Dự đoán nhãn trên tập kiểm tra
+    # Predict on testset
     y_pred = svm_model.predict(x_test_spm)
 
     count = 0

@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+from ..configs import config as cfg
 
 
 def extract_features(images):
@@ -12,12 +13,12 @@ def extract_features(images):
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
         # Detect Harris corners
-        harris_corners = cv2.cornerHarris(gray, 2, 3, 0.04)
+        harris_corners = cv2.cornerHarris(gray, cfg.HARRIS_BLOCKSIZE, cfg.HARRIS_KSIZE, cfg.HARRIS_K)
 
         # Normalize and threshold the corner strengths
-        harris_corners = cv2.normalize(harris_corners, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX,
-                                       dtype=cv2.CV_32FC1)
-        ret, harris_corners = cv2.threshold(harris_corners, 0.01 * harris_corners.max(), 255, cv2.THRESH_BINARY)
+        harris_corners = cv2.normalize(harris_corners, None, alpha=cfg.NORM_ALPHA, beta=cfg.NORM_BETA, 
+                                   norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32FC1)
+        ret, harris_corners = cv2.threshold(harris_corners, cfg.THRESHOLD_RATIO * harris_corners.max(), 255, cv2.THRESH_BINARY)
         harris_corners = np.uint8(harris_corners)
 
         # Detect keypoints with SIFT on the entire image

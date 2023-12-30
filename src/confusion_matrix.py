@@ -2,12 +2,12 @@ import itertools
 from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
 import numpy as np
-
+from ..configs import config as cfg
 
 def plotting_confusion_matrix(cm, classes,
                               normalize=False,
-                              title='Confusion matrix',
-                              cmap=plt.cm.Blues):
+                              title=cfg.CONF_MATRIX_TITLE,
+                              cmap=cfg.CONF_MATRIX_CMAP):
     # Normalized confusion matrix
     if normalize:
         cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]

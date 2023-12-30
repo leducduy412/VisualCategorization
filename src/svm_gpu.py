@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import itertools
 import pdb
 import cupy as xp
+from ..configs import config as cfg
 
 xp.random.seed(0)
 
@@ -46,8 +47,10 @@ kernel_dict = {'linear': kernel_linear,
 class SVM():
     """support vector machine"""
 
-    def __init__(self, kernel, kernel_params, lambduh=1, max_iter=1000, classification_strategy='ovr', x=None, y=None,
-                 n_folds=3, lambda_vals=None, use_optimal_lambda=False, display_plots=False, logging=False):
+    def __init__(self, kernel, kernel_params, lambduh=cfg.LAMBDUH, max_iter=cfg.MAX_ITER, 
+                 classification_strategy=cfg.CLASSIFICATION_STRATEGY, x=None, y=None, 
+                 n_folds=cfg.N_FOLDS, lambda_vals=cfg.LAMBDA_VALS, 
+                 use_optimal_lambda=cfg.USE_OPTIMAL_LAMBDA, display_plots=cfg.DISPLAY_PLOTS, logging=cfg.LOGGING):
         """initialize the classifier"""
 
         self._kernel = kernel
