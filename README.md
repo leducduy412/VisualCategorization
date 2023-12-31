@@ -59,7 +59,7 @@ To use this project:
     cd visual-categorization-group-8/src
     pip install -r requirements.txt
     ```
-- Navigate to the respective script directory and run the desired script. For example:
+- Navigate to the respective script directory and run our experiment:
     ```bash
     # To find the optimal 'k' parameter:
     python models/nb/find_k.py
