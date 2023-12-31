@@ -55,8 +55,8 @@ For Caltech-101, the accuracy also increased from 31.35% to 40.45% when using SP
 To use this project:
 - Clone the project, install requirements:
     ```bash
-    git clone https://github.com/your-github/visual-categorization-group-8.git
-    cd visual-categorization-group-8/src
+    git clone https://github.com/leducduy412/VisualCategorization.git
+    cd VisualCategorization
     pip install -r requirements.txt
     ```
 - Navigate to the respective script directory and run our experiment:
