@@ -47,9 +47,9 @@ The BoK method, while effective, ignores the spatial location of descriptors, le
 
 For Caltech-101, the accuracy also increased from 31.35% to 40.45% when using SPM with L=2, demonstrating the effectiveness of including spatial information.
 
-![BOK results](https://ibb.co/gjkGdX4)
-![SPM L=2 results](https://ibb.co/WcjGXZC)
-![SPM L=3 results](https://ibb.co/58z7JPt)
+![BOK results](https://i.ibb.co/ngxTBVP/Screenshot-from-2023-12-31-08-06-54.png)
+![SPM L=2 results](https://i.ibb.co/LCHYymK/Screenshot-from-2023-12-31-08-07-10.png)
+![SPM L=3 results](https://i.ibb.co/jMxpjSB/Screenshot-from-2023-12-31-08-07-23.png)
 
 ## Our report
 [Visual Categorization Group 8](https://drive.google.com/file/d/1nLKfMoRdf1AGfQUSnw6BhtmRKCzZXevJ/view?usp=sharing)
