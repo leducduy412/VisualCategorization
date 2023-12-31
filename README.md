@@ -19,9 +19,9 @@ Our project is an in-depth exploration into visual categorization using Bag of K
 - **Dataset 2**: An additional dataset to further test and validate our models.
 
 ### Key Performance Metrics
-- Confusion Matrix
-- Error Rate
-- Accuracy
+- Confusion Matrix: To visualize the models' performance across different classes.
+- Error Rate: The proportion of incorrect predictions.
+- Accuracy: The proportion of correct predictions over all predictions made.
 
 ## Results Overview
 
@@ -73,9 +73,6 @@ To use this project:
     # To test with dataset 2:
     python data/test/test_data2.py
     ```
-
-## Our report
-For an in-depth understanding of our methodologies, results, and analyses, refer to our [detailed report](https://drive.google.com/file/d/1nLKfMoRdf1AGfQUSnw6BhtmRKCzZXevJ/view?usp=sharing)
 
 ## Contributing
 We welcome contributions, suggestions, and issues. Please read the contributing guide before making any pull request.
