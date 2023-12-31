@@ -103,5 +103,4 @@ This project is based on the methodologies and concepts presented in the followi
   pages={2169-2178},
   doi={10.1109/CVPR.2006.68}}
 }
-
 ```
