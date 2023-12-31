@@ -87,14 +87,15 @@ We welcome contributions, suggestions, and issues. Please read the contributing 
 This project is based on the methodologies and concepts presented in the following papers:
 ```
 @article{article,
-author = {Csurka, Gabriela and Dance, Christopher and Fan, Lixin and Willamowski, Jutta and Bray, Cédric},
-year = {2004},
-month = {01},
-pages = {},
-title = {Visual categorization with bags of keypoints},
-volume = {Vol. 1},
-journal = {Work Stat Learn Comput Vision, ECCV}
+  author = {Csurka, Gabriela and Dance, Christopher and Fan, Lixin and Willamowski, Jutta and Bray, Cédric},
+  year = {2004},
+  month = {01},
+  pages = {},
+  title = {Visual categorization with bags of keypoints},
+  volume = {Vol. 1},
+  journal = {Work Stat Learn Comput Vision, ECCV}
 }
+
 @INPROCEEDINGS{1641019,
   author={Lazebnik, S. and Schmid, C. and Ponce, J.},
   booktitle={2006 IEEE Computer Society Conference on Computer Vision and Pattern Recognition (CVPR'06)}, 
