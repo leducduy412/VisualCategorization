@@ -51,38 +51,59 @@ For Caltech-101, the accuracy also increased from 31.35% to 40.45% when using SP
 ![SPM L=2 results](https://i.ibb.co/LCHYymK/Screenshot-from-2023-12-31-08-07-10.png)
 ![SPM L=3 results](https://i.ibb.co/jMxpjSB/Screenshot-from-2023-12-31-08-07-23.png)
 
-## Our report
-[Visual Categorization Group 8](https://drive.google.com/file/d/1nLKfMoRdf1AGfQUSnw6BhtmRKCzZXevJ/view?usp=sharing)
-
-## Getting Started
-
-### Installation
-Clone the repository and navigate to the project directory. Install the necessary requirements to get started with the experiments.
-
-```bash
-git clone https://github.com/your-github/visual-categorization-group-8.git
-cd visual-categorization-group-8
-pip install -r requirements.txt
-
 ## Usage
-Navigate to the 'experiment' folder to run the experiments. Execute the scripts to find optimal parameters and test the datasets.
-- Cloning this project to your computer.
-- Opeing the project folder, and also the cmd.
-- First, installing all the requirements of the project:
-```
-pip install requirements.txt
-```
-- Then you can move to the folder "experiment" to run our experiment:
-```
-# To find the k parameter
-py find_k.py
+To use this project:
+- Clone the project, install requirements:
+    ```bash
+    git clone https://github.com/your-github/visual-categorization-group-8.git
+    cd visual-categorization-group-8/src
+    pip install -r requirements.txt
+    ```
+- Navigate to the respective script directory and run the desired script. For example:
+    ```bash
+    # To find the optimal 'k' parameter:
+    python models/nb/find_k.py
 
-# To find the C parameter
-py find_C.py
+    # To find the optimal 'C' parameter:
+    python models/nb/find_C.py
 
-# Run with dataset 1
-py test_data1.py
+    # To test with dataset 1:
+    python data/test/test_data1.py
 
-# Run with dataset 2
-py test_data2.py
+    # To test with dataset 2:
+    python data/test/test_data2.py
+    ```
+
+## Our report
+For an in-depth understanding of our methodologies, results, and analyses, refer to our [detailed report](https://drive.google.com/file/d/1nLKfMoRdf1AGfQUSnw6BhtmRKCzZXevJ/view?usp=sharing)
+
+## Contributing
+We welcome contributions, suggestions, and issues. Please read the contributing guide before making any pull request.
+
+## License
+[MIT](https://choosealicense.com/licenses/mit/)
+
+## References
+This project is based on the methodologies and concepts presented in the following papers:
+```
+@article{article,
+author = {Csurka, Gabriela and Dance, Christopher and Fan, Lixin and Willamowski, Jutta and Bray, Cédric},
+year = {2004},
+month = {01},
+pages = {},
+title = {Visual categorization with bags of keypoints},
+volume = {Vol. 1},
+journal = {Work Stat Learn Comput Vision, ECCV}
+}
+@INPROCEEDINGS{1641019,
+  author={Lazebnik, S. and Schmid, C. and Ponce, J.},
+  booktitle={2006 IEEE Computer Society Conference on Computer Vision and Pattern Recognition (CVPR'06)}, 
+  title={Beyond Bags of Features: Spatial Pyramid Matching for Recognizing Natural Scene Categories}, 
+  year={2006},
+  volume={2},
+  number={},
+  pages={2169-2178},
+  doi={10.1109/CVPR.2006.68}}
+}
+
 ```
