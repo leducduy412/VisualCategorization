@@ -6,21 +6,24 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import itertools
 import pdb
-import cupy as xp
+import cupy as xp # CuPy is used for GPU acceleration.
 from ..configs import config as cfg
 
-xp.random.seed(0)
+xp.random.seed(0) # For reproducibility.
 
-
+# Define kernel functions for transforming the feature space.
 def kernel_linear(x1, x2, params):
+    """Linear kernel function."""
     return x1.dot(x2.T)
 
 
 def kernel_poly(x1, x2, params):
+    """Polynomial kernel function."""
     return (x1.dot(x2.T) + 1) ** params['degree']
 
 
 def kernel_rbf(x1, x2, params):
+    """Radial Basis Function (RBF) kernel, a type of Gaussian kernel."""
     if x2.ndim == 2:
         return xp.exp(-xp.linalg.norm(xp.subtract(x1[:, :, xp.newaxis], x2[:, :, xp.newaxis].T), axis=1) ** 2 / params[
             'sigma'] ** 2)
@@ -29,29 +32,29 @@ def kernel_rbf(x1, x2, params):
 
 
 def kernel_rbf_sklearn(x1, x2, params):
+    """RBF kernel using scikit-learn's function for comparison."""
     return xp.asarray(rbf_kernel(xp.asnumpy(x1), gamma=params['sigma']))
 
-
 def kernel_sigmoid(x1, x2, params):
+    """Sigmoid kernel function."""
     return xp.tanh(params['alpha'] * (x1.dot(x2.T)) + params['beta'])
 
-
+# Mapping of kernel names to functions.
 kernel_dict = {'linear': kernel_linear,
                'poly': kernel_poly,
                'rbf': kernel_rbf,
                'rbf_sklearn': kernel_rbf_sklearn,
-               'sigmoid': kernel_sigmoid
-               }
+               'sigmoid': kernel_sigmoid}
 
 
 class SVM():
-    """support vector machine"""
+    """Support Vector Machine class for classification tasks."""
 
     def __init__(self, kernel, kernel_params, lambduh=cfg.LAMBDUH, max_iter=cfg.MAX_ITER, 
                  classification_strategy=cfg.CLASSIFICATION_STRATEGY, x=None, y=None, 
                  n_folds=cfg.N_FOLDS, lambda_vals=cfg.LAMBDA_VALS, 
                  use_optimal_lambda=cfg.USE_OPTIMAL_LAMBDA, display_plots=cfg.DISPLAY_PLOTS, logging=cfg.LOGGING):
-        """initialize the classifier"""
+        """Initialize the SVM classifier with specified kernel and parameters."""
 
         self._kernel = kernel
         self._kernel_params = kernel_params
@@ -128,6 +131,7 @@ class SVM():
         return
 
     def cross_validation_error(self):
+    """Calculate cross-validation error for different lambda values to find the optimal one."""
         error_per_lambda = xp.zeros(len(self._lambda_vals))
 
         for i in range(len(self._lambda_vals)):
@@ -158,6 +162,7 @@ class SVM():
         return error_per_lambda.tolist()
 
     def compute_optimal_lambda(self):
+    """Find the lambda value that minimizes the cross-validation error."""
         cross_validation_error = self.cross_validation_error()
         if self._display_plots:
             df = pd.DataFrame(
@@ -168,10 +173,12 @@ class SVM():
         return self._lambda_vals[np.nanargmin(cross_validation_error)], np.min(cross_validation_error)
 
     def compute_misclassification_error(self, x, y):
+    """Compute the misclassification error of the model."""
         y_pred = self.predict(x)
         return xp.mean(y_pred != y)
 
     def predict(self, x):
+    """Predict the class labels for the provided data."""
         x = self._standardize(x)
         if self._classification_strategy == 'ovr':
             return self._predict_ovr(x)
@@ -181,6 +188,7 @@ class SVM():
             return self._predict_binary(x)
 
     def objective_plot(self):
+    """Plot the objective function value over iterations."""
         fig, ax = plt.subplots()
         ax.plot(np.array(range(len(self._objective_val_per_iter))) * 10, xp.asnumpy(self._objective_val_per_iter),
                 label='Train', c='red')
@@ -191,6 +199,7 @@ class SVM():
         plt.show()
 
     def plot_misclassification_error(self):
+    """Plot the misclassification error over iterations."""
         if self._classification_strategy == 'binary':
             fig, ax = plt.subplots()
             ax.plot(np.array(range(len(self._misclassification_error_per_iter))) * 10,

@@ -9,6 +9,7 @@ from experiment.data_preparation import prepare_data_train, prepare_data_test, p
 from spm import extract_vocab_SPM
 from svm_gpu import SVM
 
+# Dictionary mapping class names to numerical labels.
 class_name = ['accordion', 'airplanes', 'anchor', 'ant', 'barrel', 'bass',
               'beaver', 'binocular', 'bonsai', 'brain', 'brontosaurus',
               'buddha', 'butterfly', 'camera', 'cannon', 'car_side',
@@ -49,27 +50,35 @@ dic_class_name = {'accordion': 1, 'airplane': 2, 'anchor': 3, 'ant': 4, 'barrel'
 
 
 def SPM_data1():
+    """
+    Test the first dataset using Spatial Pyramid Matching (SPM) and a Support Vector Machine (SVM).
+    The process involves training and testing the SVM on features extracted via SPM.
+    """
+    # Prepare training, testing, and validation data.
     x_train, y_train = prepare_data_train()
     x_test, y_test = prepare_data_test()
     x_val, y_val = prepare_data_val()
 
+    # Combine training and validation sets for a more comprehensive training dataset.
     x_train = x_train + x_val
     y_train = y_train + y_val
 
+    # Load the codebook generated from the training data.
     with open(cfg.CODEBOOK_PATH, 'rb') as fp:
         codebook = pickle.load(fp)
 
-    # Extract features using SPM
+    # Extract features from the training and test data using Spatial Pyramid Matching (SPM).
     x_train_spm = extract_vocab_SPM(x_train, L=cfg.SPM_L, kmeans=codebook)
     x_test_spm = extract_vocab_SPM(x_test, L=cfg.SPM_L, kmeans=codebook)
 
-    # Initialize and train the SVM model
+    # Initialize the SVM model with the specified kernel and parameters.
     svm_model = SVM(kernel=cfg.SVM_KERNEL, kernel_params={}, lambduh=cfg.SVM_LAMBDUH)
 
-    # Training model
-
+    # Convert the feature matrices to GPU arrays for faster computation.
     x_train_spm = xp.asarray(x_train_spm)
     x_test_spm = xp.asarray(x_test_spm)
+
+    # Convert class labels from string to numerical format.
     y_tr, y_te = [], []
     for y in y_train:
         y_tr.append(dic_class_name[y])
@@ -77,41 +86,43 @@ def SPM_data1():
     for y in y_test:
         y_te.append(dic_class_name[y])
     y_te = xp.asarray(y_te)
+
+    # Train the SVM model using the training data.
     svm_model.fit(x_train_spm, y_tr)
 
-    # Predict on testset
+    # Predict the class labels for the test data.
     y_pred = svm_model.predict(x_test_spm)
 
-    count = 0
-    print(y_pred.shape)
-    for i in range(y_pred.shape[0]):
-        if y_pred[i] == y_te[i]:
-            count = count + 1
-    print(count)
+    # Calculate and print the accuracy of the model on the test data.
+    count = sum(y_pred == y_te)
     print(f'Accuracy: {count / y_pred.shape[0]}')
 
-    y_pred_array = []
+    # Convert numerical labels back to the original class names for better interpretability.
+    y_pred_array = [get_key(dic_class_name, int(y)) for y in y_pred]
+    y_te_array = [get_key(dic_class_name, int(y)) for y in y_te]
 
-    def get_key(dic_class_name, val):
-        for key, value in dic_class_name.items():
-            if val == value:
-                return key
-
-    for y in y_pred:
-        y_pred_array.append(get_key(dic_class_name, int(y)))
-    y_te_array = []
-    for y in y_te:
-        y_te_array.append(get_key(dic_class_name, int(y)))
-
+    # Print the true and predicted class names.
     print(y_te_array)
     print(y_pred_array)
+
+    # Generate and visualize the confusion matrix to understand the model's performance in detail.
     cnf_matrix = confusion_matrix(np.array([y_te_array]).T, y_pred_array, labels=class_name)
     np.set_printoptions(precision=2)
-
     plt.figure(figsize=(90, 30))
-    plotting_confusion_matrix(cnf_matrix, classes=class_name,
-                              title='Confusion matrix, without normalization')
+    plotting_confusion_matrix(cnf_matrix, classes=class_name, title='Confusion matrix, without normalization')
 
+def get_key(dic_class_name, val):
+    """
+    Helper function to get the class name from its numerical label.
+    Args:
+        dic_class_name: Dictionary mapping class names to numerical labels.
+        val: The numerical label for which the class name is needed.
+    Returns:
+        The class name corresponding to the given numerical label.
+    """
+    for key, value in dic_class_name.items():
+        if val == value:
+            return key
 
 if __name__ == "__main__":
     SPM_data1()

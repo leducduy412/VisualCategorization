@@ -8,6 +8,7 @@ from features_extraction import extract_features
 from histogram_extraction import build_vocab
 from svm_gpu import SVM
 
+# Dictionary mapping class names to numerical labels.
 dic_class_name = {'accordion': 1, 'airplane': 2, 'anchor': 3, 'ant': 4, 'barrel': 5, 'bass': 6,
                   'beaver': 7, 'binocular': 8, 'bonsai': 9, 'brain': 10, 'brontosaurus': 11,
                   'buddha': 12, 'butterfly': 13, 'camera': 14, 'cannon': 15, 'car_side': 16,
@@ -29,31 +30,38 @@ dic_class_name = {'accordion': 1, 'airplane': 2, 'anchor': 3, 'ant': 4, 'barrel'
 
 
 def find_C():
+    """
+    Determine the optimal value of the regularization parameter (C) for the SVM classifier.
+    This is done by training the SVM with different values of C and selecting the one that
+    results in the highest accuracy on the validation set.
+    """
+    # Prepare the training, validation, and test data.
     x_train, y_train = prepare_data_train()
     x_test_C, y_test_C = prepare_data_test()
     x_val, y_val = prepare_data_val()
 
+    # Combine the training and validation data for cross-validation.
     x_train_C = x_train + x_val
     y_train_C = y_train + y_val
 
-    
+    # Load the codebook generated from the training data.
     with open(cfg.CODEBOOK_PATH, 'rb') as fp:
         codebook = pickle.load(fp)
 
+    # Extract features from the training and test data using the loaded codebook.
     _, x_train_C = extract_features(x_train_C)
     _, x_test_C = extract_features(x_test_C)
 
-    with open(cfg.CODEBOOK_PATH, 'rb') as fp:
-        codebook_C = pickle.load(fp)
+    # Build the visual word histograms for the training and test data.
+    x_train_C = build_vocab(x_train_C, codebook)
+    x_test_C = build_vocab(x_test_C, codebook)
 
-    x_train_C = build_vocab(x_train_C, codebook_C)
-    x_test_C = build_vocab(x_test_C, codebook_C)
-
+    # Initialize variables to store the best accuracy and corresponding C value.
     best_accuracy = 0
     best_c = 0.0001
 
+    # Convert class labels from string to numerical format.
     y_tr_C, y_te_C = [], []
-
     for y in y_train_C:
         y_tr_C.append(dic_class_name[y])
     y_tr_C = xp.asarray(y_tr_C)
@@ -61,26 +69,29 @@ def find_C():
         y_te_C.append(dic_class_name[y])
     y_te_C = xp.asarray(y_te_C)
 
+    # Convert feature matrices to GPU arrays for faster computation.
     x_train_C = xp.asarray(x_train_C)
     x_test_C = xp.asarray(x_test_C)
 
+    # Iterate over a range of C values to find the optimal one.
     for c in np.arange(cfg.C_VALUES_RANGE[0], cfg.C_VALUES_RANGE[1], cfg.C_VALUES_RANGE[2]):
+        # Initialize and train the SVM model with the current value of C.
         svm_model = SVM(kernel='linear', kernel_params={}, lambduh=c)
         svm_model.fit(x_train_C, y_tr_C)
         y_pred = svm_model.predict(x_test_C)
-        count = 0
-        for i in range(y_pred.shape[0]):
-            if y_pred[i] == y_te_C[i]:
-                count = count + 1
+        
+        # Calculate the accuracy of the model on the test data.
+        count = sum(y_pred == y_te_C)
         accuracy = count / y_pred.shape[0]
         print(f"C = {c}, Accuracy: {accuracy * 100}%")
+        
+        # Update the best accuracy and C value if the current model is better.
         if accuracy > best_accuracy:
             best_accuracy = accuracy
             best_c = c
 
-    # In ra giá trị C tối ưu và độ chính xác tương ứng
+    # Print out the best C value and the corresponding accuracy.
     print(f"Best C: {best_c}, Best Accuracy: {best_accuracy * 100}%")
-
 
 if __name__ == "__main__":
     find_C()
